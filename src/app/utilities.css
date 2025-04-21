@@ -1,0 +1,33 @@
+/* Custom utility classes */
+
+.bg-background {
+  background-color: rgb(var(--background));
+}
+
+.bg-foreground {
+  background-color: rgb(var(--foreground));
+}
+
+.bg-primary {
+  background-color: rgb(var(--primary));
+}
+
+.bg-accent {
+  background-color: rgb(var(--accent));
+}
+
+.text-foreground {
+  color: rgb(var(--foreground));
+}
+
+.text-primary {
+  color: rgb(var(--primary));
+}
+
+.text-muted {
+  color: rgb(var(--muted));
+}
+
+.border-border {
+  border-color: rgb(var(--border));
+} 
