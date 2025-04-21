@@ -34,3 +34,27 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Deploy on GitHub Pages
+
+This portfolio is configured for easy deployment to GitHub Pages. You can deploy it using one of the following methods:
+
+### Method 1: Manual Deployment
+
+1. Update the `homepage` field in `package.json` with your GitHub username:
+   ```json
+   "homepage": "https://YOURUSERNAME.github.io/portfolio-1"
+   ```
+
+2. Build and deploy the application:
+   ```bash
+   npm run deploy
+   ```
+
+### Method 2: Automatic Deployment via GitHub Actions
+
+1. Push your changes to the `main` branch of your GitHub repository.
+2. GitHub Actions will automatically build and deploy your site to the `gh-pages` branch.
+3. Configure GitHub Pages in your repository settings to deploy from the `gh-pages` branch.
+
+After deployment, your portfolio will be available at `https://YOURUSERNAME.github.io/portfolio-1`.
