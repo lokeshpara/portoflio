@@ -5,13 +5,13 @@
   "homepage": "https://lokeshpara.github.io/portfolio-1",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && (IF NOT EXIST out\\.nojekyll type nul > out\\.nojekyll)",
     "start": "next start",
     "lint": "next lint",
     "deploy:vercel": "vercel",
     "deploy:vercel:prod": "vercel --prod",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out",
+    "deploy": "gh-pages -d out -t true",
     "export": "next build && next export"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "@radix-ui/react-navigation-menu": "^1.2.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "critters": "^0.0.23",
     "framer-motion": "^12.7.4",
     "lucide-react": "^0.501.0",
     "next": "15.3.1",

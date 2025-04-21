@@ -1,6 +1,6 @@
 "use client";
 
-import Link from 'next/link';
+// import Link from 'next/link';
 
 // Blog post data with images
 const blogPosts = [

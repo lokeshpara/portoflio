@@ -2,7 +2,7 @@
 
 // Remove motion import
 // import { motion } from 'framer-motion';
-import Link from 'next/link';
+// import Link from 'next/link';
 
 // Add your project images to the /public/images/ directory
 // Recommended image size: 600x400px or similar ratio

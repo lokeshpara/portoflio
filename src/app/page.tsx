@@ -6,6 +6,7 @@ import ExperienceSection from '@/components/sections/ExperienceSection';
 import ProjectsSection from '@/components/sections/ProjectsSection';
 import BlogSection from '@/components/sections/BlogSection';
 import EducationSection from '@/components/sections/EducationSection';
+import LoadingScreen from '@/components/LoadingScreen';
 
 // Section reference component for direct navigation
 const SectionReference = ({ id, title, onSectionClick }: { id: string; title: string; onSectionClick: (id: string) => void }) => {
@@ -30,6 +31,7 @@ const SectionReference = ({ id, title, onSectionClick }: { id: string; title: st
 export default function Home() {
   const [activeSection, setActiveSection] = useState('about');
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const rightColumnRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const experienceRef = useRef<HTMLDivElement>(null);
@@ -153,6 +155,16 @@ export default function Home() {
     };
   }, []);
 
+  // Handle initial loading
+  useEffect(() => {
+    // Simulate a minimum loading time to ensure the animation completes
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Debug useEffect to check if refs are properly initialized
   useEffect(() => {
     // Wait a bit to ensure DOM is rendered
@@ -177,7 +189,7 @@ export default function Home() {
 
   // Handle initial hash scrolling and hash changes - simplified
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || isLoading) return;
     
     // First render: check for hash in URL
     if (window.location.hash) {
@@ -203,7 +215,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
-  }, []);
+  }, [isLoading]);
 
   // Handle screen size changes
   useEffect(() => {
@@ -223,6 +235,12 @@ export default function Home() {
     };
   }, []);
 
+  // Return loading screen while content is preparing
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  // Return main content once loading is complete
   return (
     <div className="bg-slate-900 min-h-screen py-12 md:py-20 lg:py-24 relative overflow-hidden" style={{ paddingTop: '1rem', paddingBottom: '1.5rem', fontFeatureSettings: "'ss01', 'ss02', 'cv01', 'cv02'" }}>
       {/* Background Spotlight Effects */}
@@ -348,7 +366,7 @@ export default function Home() {
         {/* Fixed Left Column - No Scrolling */}
         <div className="fixed top-0 left-0 h-screen w-[calc(min(90vw,1000px)*0.4)] max-w-[400px] z-10" style={{ 
           marginLeft: 'calc((100vw - min(90vw, 1000px))/2)',
-          top: '0'
+          top: '2rem'
         }}>
           <div className="flex flex-col h-full px-3 md:px-4 lg:px-5 xl:px-6">
             {/* Profile section - reduce margin */}
@@ -544,345 +562,345 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Scrollable Right Column */}
-        <div 
-          ref={rightColumnRef} 
-          onScroll={handleScroll}
-          className="h-screen overflow-y-auto pt-0"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            WebkitOverflowScrolling: 'touch',
-            scrollBehavior: 'smooth',
-            willChange: 'scroll-position', // Hint to browser to optimize scrolling
-            transform: 'translateZ(0)', // Force hardware acceleration
-            backfaceVisibility: 'hidden', // Reduce visual artifacts
-            marginLeft: 'calc(min(90vw,1000px)*0.48)',
-            width: 'calc(100% - calc(min(90vw,1000px)*0.48))'
-          }}
-        >
-          <style jsx global>{`
-            @media (min-width: 800px) {
-              .lg\\:block {
-                display: block;
-              }
-              .lg\\:hidden {
-                display: none;
-              }
+      {/* Scrollable Right Column */}
+      <div 
+        ref={rightColumnRef} 
+        onScroll={handleScroll}
+        className="h-screen overflow-y-auto pt-0"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth',
+          willChange: 'scroll-position', // Hint to browser to optimize scrolling
+          transform: 'translateZ(0)', // Force hardware acceleration
+          backfaceVisibility: 'hidden', // Reduce visual artifacts
+          marginLeft: 'calc(min(90vw,1000px)*0.48)',
+          width: 'calc(100% - calc(min(90vw,1000px)*0.48))'
+        }}
+      >
+        <style jsx global>{`
+          @media (min-width: 800px) {
+            .lg\\:block {
+              display: block;
             }
-            @media (max-width: 799px) {
-              .hidden.lg\\:block {
-                display: none;
-              }
-              .block.lg\\:hidden {
-                display: block;
-              }
-            }
-            
-            /* Hide scrollbars */
-            ::-webkit-scrollbar {
+            .lg\\:hidden {
               display: none;
             }
-            
-            /* List style reset for navigation */
-            nav ul {
-              list-style: none;
-              padding: 0;
-              margin: 0;
+          }
+          @media (max-width: 799px) {
+            .hidden.lg\\:block {
+              display: none;
             }
-            
-            /* Mobile list style reset */
-            .mobile-social {
-              list-style: none;
-              padding: 0;
-              margin: 0;
+            .block.lg\\:hidden {
+              display: block;
             }
-            
-            /* Better section positioning with lightweight approach */
-            .section-container {
-              position: relative;
-              padding-top: 20px;
-              scroll-margin-top: 20px;
-            }
-            
-            /* Optimize rendering during scrolling */
-            @media (prefers-reduced-motion: no-preference) {
-              .scroll-container {
-                scroll-behavior: smooth;
-              }
-            }
-            
-            /* New Creative Line Animation - REMOVE FADES */
-            @keyframes dash {
-              from { stroke-dashoffset: 20; }
-              to { stroke-dashoffset: 0; }
-            }
-            
-            @keyframes pulse {
-              0%, 100% { opacity: 0.6; }
-              50% { opacity: 1; }
-            }
-            
-            /* Remove all animations that affect initial render */
-            .navlink-container {
-              opacity: 1 !important;
-              animation: none !important;
-              transform: none !important;
-            }
-            
-            .social-container {
-              display: flex;
-              gap: 12px;
-              margin-bottom: 12px;
-              opacity: 1 !important;
-            }
-            
-            .social-link,
-            .email-link,
-            .navlink,
-            .navlink-icon,
-            .navlink-text,
-            .resume-btn,
-            .mobile-social {
-              opacity: 1 !important;
-              animation: none !important;
-            }
-            
-            /* Remove all animation delays */
-            .navlink-container:nth-child(1),
-            .navlink-container:nth-child(2),
-            .navlink-container:nth-child(3),
-            .navlink-container:nth-child(4),
-            .navlink-container:nth-child(5),
-            .social-link:nth-child(1),
-            .social-link:nth-child(2),
-            .social-link:nth-child(3) {
-              animation-delay: 0s !important;
-            }
-            
-            /* Keep hover animations */
-            .navlink:hover .navlink-icon .line-svg,
-            .navlink-active .navlink-icon .line-svg {
-              width: 36px;
-            }
-            
-            .navlink:hover .navlink-text {
-              transform: translateX(5px);
-              color: #64ffda;
-              font-size: var(--nav-font-size-hover);
-            }
-            
-            /* Mobile styles */
-            .mobile-social {
-              margin-top: 1rem;
-              margin-bottom: 0;
-              opacity: 1 !important;
-            }
-            
-            /* Animation keyframes */
-            @keyframes expandDots {
-              0% { width: 20px; }
-              50% { width: 35px; }
-              100% { width: 40px; }
-            }
-            
-            @keyframes glowPulse {
-              0% { box-shadow: 0 0 2px #64ffda; }
-              50% { box-shadow: 0 0 8px #64ffda; }
-              100% { box-shadow: 0 0 2px #64ffda; }
-            }
-            
-            @keyframes float {
-              0%, 100% { transform: translateY(0); }
-              50% { transform: translateY(-2px); }
-            }
-            
-            /* List style reset for navigation */
-            nav ul {
-              list-style: none;
-              padding: 0;
-              margin: 0;
-            }
-            
-            /* Navlink container */
-            .navlink-container {
-              opacity: 1;
-              margin-bottom: 10px;
-            }
-            
-            /* Base navlink styles */
-            .navlink {
-              position: relative;
-              display: flex;
-              align-items: center;
-              padding: 8px 0;
-              opacity: 1;
-              color: #8892b0;
-              font-size: var(--nav-font-size);
-              transition: color 0.3s ease;
-            }
-            
-            .navlink:hover {
-              color: #64ffda;
-            }
-            
-            /* Creative dots/dash indicator */
-            .navlink-indicator {
-              position: relative;
-              height: 20px;
-              width: 40px;
-              margin-right: 12px;
-              display: flex;
-              align-items: center;
-            }
-            
-            .navlink-indicator::before {
-              content: '';
-              position: absolute;
-              width: 20px;
-              height: 2px;
-              background: transparent;
-              transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-            
-            .navlink-dots {
-              display: flex;
-              align-items: center;
-              height: 100%;
-              transition: transform 0.3s ease;
-            }
-            
-            .dot {
-              width: 4px;
-              height: 4px;
-              margin-right: 3px;
-              background-color: #64ffda;
-              border-radius: 50%;
-              opacity: 0.7;
-              transition: all 0.3s ease;
-            }
-            
-            .dot:nth-child(1) { transition-delay: 0.05s; }
-            .dot:nth-child(2) { transition-delay: 0.1s; }
-            .dot:nth-child(3) { transition-delay: 0.15s; }
-            .dot:nth-child(4) { transition-delay: 0.2s; transition: all 0.3s ease, opacity 0.5s ease; opacity: 0; }
-            .dot:nth-child(5) { transition-delay: 0.25s; transition: all 0.3s ease, opacity 0.5s ease; opacity: 0; }
-            
-            /* Hover and active effects */
-            .navlink:hover .dot,
-            .navlink-active .dot {
-              opacity: 1;
-              animation: float 2s infinite ease-in-out;
-            }
-            
-            .navlink:hover .dot:nth-child(4),
-            .navlink:hover .dot:nth-child(5),
-            .navlink-active .dot:nth-child(4),
-            .navlink-active .dot:nth-child(5) {
-              opacity: 1;
-            }
-            
-            .navlink:hover .dot:nth-child(1),
-            .navlink-active .dot:nth-child(1) {
-              animation-delay: 0.1s;
-            }
-            
-            .navlink:hover .dot:nth-child(2),
-            .navlink-active .dot:nth-child(2) {
-              animation-delay: 0.2s;
-            }
-            
-            .navlink:hover .dot:nth-child(3),
-            .navlink-active .dot:nth-child(3) {
-              animation-delay: 0.3s;
-            }
-            
-            .navlink:hover .dot:nth-child(4),
-            .navlink-active .dot:nth-child(4) {
-              animation-delay: 0.4s;
-            }
-            
-            .navlink:hover .dot:nth-child(5),
-            .navlink-active .dot:nth-child(5) {
-              animation-delay: 0.5s;
-            }
-            
-            /* Text animation */
-            .navlink-text {
-              position: relative;
-              opacity: 1;
-              font-weight: 500;
-              letter-spacing: 0.5px;
-              transition: transform 0.3s ease, color 0.3s ease;
-            }
-            
-            .navlink:hover .navlink-text,
-            .navlink-active .navlink-text {
-              transform: translateX(5px);
-              color: #64ffda;
-            }
-            
-            .navlink-active .navlink-text {
-              color: #64ffda;
-            }
-          `}</style>
+          }
           
-          {/* Content container */}
-          <div className="mx-auto" style={{ 
-            width: '85%',
-            maxWidth: '670px',
-            paddingRight: '1rem',
-            paddingLeft: '1rem',
-            marginTop: '1.5rem', 
-            marginBottom: '1rem',
-            overflow: 'hidden'
-          }}>
-            <div 
-              className="bg-slate-900/50 rounded-lg shadow-lg backdrop-blur-sm"
-              id="content-column"
-            >
-              <div className="px-6 py-12">
-                <section ref={aboutRef} id="about" className="right-column-section mb-24 section-container">
-                  <div className="flex items-center mb-4">
-                    <h2 className="text-xl font-semibold text-lightest-slate hidden">About</h2>
-                    <SectionReference id="about" title="About" onSectionClick={scrollToSection} />
-                  </div>
-                  <AboutSection />
-                </section>
-                
-                <section ref={experienceRef} id="experience" className="right-column-section mb-24 section-container">
-                  <div className="flex items-center mb-4">
-                    <h2 className="text-xl font-semibold text-lightest-slate hidden">Experience</h2>
-                    <SectionReference id="experience" title="Experience" onSectionClick={scrollToSection} />
-                  </div>
-                  <ExperienceSection />
-                </section>
-                
-                <section ref={projectsRef} id="projects" className="right-column-section mb-24 section-container">
-                  <div className="flex items-center mb-4">
-                    <h2 className="text-xl font-semibold text-lightest-slate hidden">Projects</h2>
-                    <SectionReference id="projects" title="Projects" onSectionClick={scrollToSection} />
-                  </div>
-                  <ProjectsSection />
-                </section>
-                
-                <section ref={blogRef} id="blog" className="right-column-section mb-24 section-container">
-                  <div className="flex items-center mb-4">
-                    <h2 className="text-xl font-semibold text-lightest-slate hidden">Blog</h2>
-                    <SectionReference id="blog" title="Blog" onSectionClick={scrollToSection} />
-                  </div>
-                  <BlogSection />
-                </section>
-                
-                <section ref={educationRef} id="education" className="right-column-section section-container">
-                  <div className="flex items-center mb-4">
-                    <h2 className="text-xl font-semibold text-lightest-slate hidden">Education</h2>
-                    <SectionReference id="education" title="Education" onSectionClick={scrollToSection} />
-                  </div>
-                  <EducationSection />
-                </section>
-              </div>
+          /* Hide scrollbars */
+          ::-webkit-scrollbar {
+            display: none;
+          }
+          
+          /* List style reset for navigation */
+          nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          
+          /* Mobile list style reset */
+          .mobile-social {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          
+          /* Better section positioning with lightweight approach */
+          .section-container {
+            position: relative;
+            padding-top: 20px;
+            scroll-margin-top: 20px;
+          }
+          
+          /* Optimize rendering during scrolling */
+          @media (prefers-reduced-motion: no-preference) {
+            .scroll-container {
+              scroll-behavior: smooth;
+            }
+          }
+          
+          /* New Creative Line Animation - REMOVE FADES */
+          @keyframes dash {
+            from { stroke-dashoffset: 20; }
+            to { stroke-dashoffset: 0; }
+          }
+          
+          @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+          }
+          
+          /* Remove all animations that affect initial render */
+          .navlink-container {
+            opacity: 1 !important;
+            animation: none !important;
+            transform: none !important;
+          }
+          
+          .social-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            opacity: 1 !important;
+          }
+          
+          .social-link,
+          .email-link,
+          .navlink,
+          .navlink-icon,
+          .navlink-text,
+          .resume-btn,
+          .mobile-social {
+            opacity: 1 !important;
+            animation: none !important;
+          }
+          
+          /* Remove all animation delays */
+          .navlink-container:nth-child(1),
+          .navlink-container:nth-child(2),
+          .navlink-container:nth-child(3),
+          .navlink-container:nth-child(4),
+          .navlink-container:nth-child(5),
+          .social-link:nth-child(1),
+          .social-link:nth-child(2),
+          .social-link:nth-child(3) {
+            animation-delay: 0s !important;
+          }
+          
+          /* Keep hover animations */
+          .navlink:hover .navlink-icon .line-svg,
+          .navlink-active .navlink-icon .line-svg {
+            width: 36px;
+          }
+          
+          .navlink:hover .navlink-text {
+            transform: translateX(5px);
+            color: #64ffda;
+            font-size: var(--nav-font-size-hover);
+          }
+          
+          /* Mobile styles */
+          .mobile-social {
+            margin-top: 1rem;
+            margin-bottom: 0;
+            opacity: 1 !important;
+          }
+          
+          /* Animation keyframes */
+          @keyframes expandDots {
+            0% { width: 20px; }
+            50% { width: 35px; }
+            100% { width: 40px; }
+          }
+          
+          @keyframes glowPulse {
+            0% { box-shadow: 0 0 2px #64ffda; }
+            50% { box-shadow: 0 0 8px #64ffda; }
+            100% { box-shadow: 0 0 2px #64ffda; }
+          }
+          
+          @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+          }
+          
+          /* List style reset for navigation */
+          nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          
+          /* Navlink container */
+          .navlink-container {
+            opacity: 1;
+            margin-bottom: 10px;
+          }
+          
+          /* Base navlink styles */
+          .navlink {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            opacity: 1;
+            color: #8892b0;
+            font-size: var(--nav-font-size);
+            transition: color 0.3s ease;
+          }
+          
+          .navlink:hover {
+            color: #64ffda;
+          }
+          
+          /* Creative dots/dash indicator */
+          .navlink-indicator {
+            position: relative;
+            height: 20px;
+            width: 40px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+          }
+          
+          .navlink-indicator::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 2px;
+            background: transparent;
+            transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .navlink-dots {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            transition: transform 0.3s ease;
+          }
+          
+          .dot {
+            width: 4px;
+            height: 4px;
+            margin-right: 3px;
+            background-color: #64ffda;
+            border-radius: 50%;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+          }
+          
+          .dot:nth-child(1) { transition-delay: 0.05s; }
+          .dot:nth-child(2) { transition-delay: 0.1s; }
+          .dot:nth-child(3) { transition-delay: 0.15s; }
+          .dot:nth-child(4) { transition-delay: 0.2s; transition: all 0.3s ease, opacity 0.5s ease; opacity: 0; }
+          .dot:nth-child(5) { transition-delay: 0.25s; transition: all 0.3s ease, opacity 0.5s ease; opacity: 0; }
+          
+          /* Hover and active effects */
+          .navlink:hover .dot,
+          .navlink-active .dot {
+            opacity: 1;
+            animation: float 2s infinite ease-in-out;
+          }
+          
+          .navlink:hover .dot:nth-child(4),
+          .navlink:hover .dot:nth-child(5),
+          .navlink-active .dot:nth-child(4),
+          .navlink-active .dot:nth-child(5) {
+            opacity: 1;
+          }
+          
+          .navlink:hover .dot:nth-child(1),
+          .navlink-active .dot:nth-child(1) {
+            animation-delay: 0.1s;
+          }
+          
+          .navlink:hover .dot:nth-child(2),
+          .navlink-active .dot:nth-child(2) {
+            animation-delay: 0.2s;
+          }
+          
+          .navlink:hover .dot:nth-child(3),
+          .navlink-active .dot:nth-child(3) {
+            animation-delay: 0.3s;
+          }
+          
+          .navlink:hover .dot:nth-child(4),
+          .navlink-active .dot:nth-child(4) {
+            animation-delay: 0.4s;
+          }
+          
+          .navlink:hover .dot:nth-child(5),
+          .navlink-active .dot:nth-child(5) {
+            animation-delay: 0.5s;
+          }
+          
+          /* Text animation */
+          .navlink-text {
+            position: relative;
+            opacity: 1;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: transform 0.3s ease, color 0.3s ease;
+          }
+          
+          .navlink:hover .navlink-text,
+          .navlink-active .navlink-text {
+            transform: translateX(5px);
+            color: #64ffda;
+          }
+          
+          .navlink-active .navlink-text {
+            color: #64ffda;
+          }
+        `}</style>
+        
+        {/* Content container */}
+        <div className="mx-auto" style={{ 
+          width: '85%',
+          maxWidth: '670px',
+          paddingRight: '1rem',
+          paddingLeft: '1rem',
+          marginTop: '1.5rem', 
+          marginBottom: '1rem',
+          overflow: 'hidden'
+        }}>
+          <div 
+            className="bg-slate-900/50 rounded-lg shadow-lg backdrop-blur-sm"
+            id="content-column"
+          >
+            <div className="px-6 py-12">
+              <section ref={aboutRef} id="about" className="right-column-section mb-24 section-container">
+                <div className="flex items-center mb-4">
+                  <h2 className="text-xl font-semibold text-lightest-slate hidden">About</h2>
+                  <SectionReference id="about" title="About" onSectionClick={scrollToSection} />
+                </div>
+                <AboutSection />
+              </section>
+              
+              <section ref={experienceRef} id="experience" className="right-column-section mb-24 section-container">
+                <div className="flex items-center mb-4">
+                  <h2 className="text-xl font-semibold text-lightest-slate hidden">Experience</h2>
+                  <SectionReference id="experience" title="Experience" onSectionClick={scrollToSection} />
+                </div>
+                <ExperienceSection />
+              </section>
+              
+              <section ref={projectsRef} id="projects" className="right-column-section mb-24 section-container">
+                <div className="flex items-center mb-4">
+                  <h2 className="text-xl font-semibold text-lightest-slate hidden">Projects</h2>
+                  <SectionReference id="projects" title="Projects" onSectionClick={scrollToSection} />
+                </div>
+                <ProjectsSection />
+              </section>
+              
+              <section ref={blogRef} id="blog" className="right-column-section mb-24 section-container">
+                <div className="flex items-center mb-4">
+                  <h2 className="text-xl font-semibold text-lightest-slate hidden">Blog</h2>
+                  <SectionReference id="blog" title="Blog" onSectionClick={scrollToSection} />
+                </div>
+                <BlogSection />
+              </section>
+              
+              <section ref={educationRef} id="education" className="right-column-section section-container">
+                <div className="flex items-center mb-4">
+                  <h2 className="text-xl font-semibold text-lightest-slate hidden">Education</h2>
+                  <SectionReference id="education" title="Education" onSectionClick={scrollToSection} />
+                </div>
+                <EducationSection />
+              </section>
             </div>
           </div>
         </div>
